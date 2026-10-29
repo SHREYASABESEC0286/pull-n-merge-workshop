@@ -1,70 +1,119 @@
-# Git Practice — One Repo, One Workflow
+# Git Practice — one repository, one small codebase
 
-**Work from the repository root**, not from inside this folder. This is a regular project folder, not a separate Git repository.
+Run all commands from the **root of the cloned `pull-n-merge-workshop` repository**. `git-practice/` is a regular folder, not a separate Git repository. Do not run `git init` inside it.
 
-## Practice sequence
+The tiny Campus Events app in [`demo-app/`](demo-app/README.md) is the codebase used throughout the command labs. The separate `developer-issue/` folder is the later real-world bug-fix exercise.
 
-### 1. Inspect the current repository
+## Lab 01 — Inspect state, exact changes, and saved history
+
+Start from a clean clone. Run these from the repository root:
+
+```bash
+git status
+git log --oneline
+```
+
+- `git status` — summarizes modified, staged, untracked, or clean files. Use it before and after editing and before committing.
+- `git diff` — shows exact unstaged line changes (`-` old line, `+` new line). Use it to review code before staging.
+- `git log --oneline` — lists saved commits with a short hash and message. Uncommitted edits do not appear here.
+
+Open `git-practice/demo-app/app.js` and change `Campus Tech Meetup` to `Campus AI Night`. Save the file, then run:
 
 ```bash
 git status
 git diff
-git log --oneline --graph --all
+git log --oneline
 ```
 
-The working tree should initially be clean. `git diff` may show nothing until you edit a tracked file. That empty output is a valid result.
+Expected: status identifies `git-practice/demo-app/app.js` as modified; diff shows the old and new title; log still shows only previously committed changes. Refresh `git-practice/demo-app/index.html` to see the new title.
 
-### 2. Create a branch before making your practice change
+## Lab 02 — Create and verify a branch
 
 ```bash
 git branch
-git switch -c practice/my-commands
+git switch -c feature/my-change
+git branch --show-current
 ```
 
-If you already created this branch, switch to it using `git switch practice/my-commands`.
+- `git branch` — lists local branches; `*` marks the current branch.
+- `git switch -c feature/my-change` — creates a branch at the current commit and switches to it.
+- `git branch --show-current` — prints the active branch name so you can check before staging or committing.
 
-### 3. Make a tiny edit
+For this teaching flow, the harmless edit from Lab 01 is still uncommitted when the new branch is created. Because the new branch starts from the same commit and Git can safely switch, the edit remains in the working tree and will be committed on `feature/my-change`. In normal development, create a feature branch before you start coding.
 
-Open `git-practice/practice-notes.md` and add one line under **My notes**. Then run:
+## Lab 03 — Stage, review, and commit
 
-```bash
-git status
-git diff
-```
-
-### 4. Stage and commit
+Make sure `git branch --show-current` prints `feature/my-change`.
 
 ```bash
-git add git-practice/practice-notes.md
+git add git-practice/demo-app/app.js
 git diff --staged
-git commit -m "Add my Git workshop notes"
+git commit -m "Update event title"
+git status
+git log --oneline
 ```
 
-Use `git status` and `git log --oneline` to verify the commit.
+- `git add <file>` — stages the file's current content for the next commit; it does not commit or upload it.
+- `git diff --staged` — previews the exact staged change that will go into the next commit.
+- `git commit -m "..."` — records staged content in local history. It stays local until you push.
 
-### 5. Inspect your remote and sync safely
+Expected: after the commit, status reports a clean working tree and log shows `Update event title` at the top.
+
+## Lab 04 — Understand the remote
 
 ```bash
 git remote -v
 git fetch origin
-git switch main
-git pull origin main
-git switch practice/my-commands
+git pull
+git push
 ```
 
-`fetch` downloads remote-tracking information; it does not change your working files. `pull` integrates remote changes into the current branch. If `git pull origin main` reports that you are already up to date, that is a normal result. If you have conflicts or unexpected local changes, stop and ask for help rather than trying destructive commands.
+- `git remote -v` — shows remote names and fetch/push URLs; after forking, `origin` should point to your fork.
+- `git fetch origin` — downloads remote updates and refreshes remote-tracking references, without integrating into your current branch.
+- `git pull` — fetches and integrates remote changes into the current branch. Check `git status` and the current branch first.
+- `git push` — publishes local commits to the remote branch. For the first push of a branch, use `git push -u origin <branch>`.
 
-### 6. Push your branch to your own GitHub profile
+The commands require a configured remote; network commands also require internet and GitHub authentication. If there are no remote updates, follow the presenter explanation rather than forcing a pull.
+
+## Lab 05 — Recovery commands (use carefully)
+
+Use only `git-practice/recovery-playground.txt` for live recovery practice.
+
+- `git restore <file>` — restores a file in the working tree to its staged version by default; inspect `git diff` first because unstaged edits can be lost.
+- `git revert <commit-hash>` — creates a new commit that reverses an earlier commit while preserving history. Use a real hash from `git log --oneline` in a disposable branch.
+- `git stash` — temporarily shelves local work; `git stash pop` tries to reapply it and can still produce conflicts.
+
+Never experiment with `git reset --hard` or `git push --force` in this workshop.
+
+## Lab 06 — Add one practice note and push your branch
+
+Before the final push, edit `git-practice/practice-notes.md` and replace the placeholder note with:
+
+```text
+Practised the PULL N MERGE Git workflow.
+```
+
+Then run:
 
 ```bash
-git push -u origin practice/my-commands
+git remote -v
+git switch feature/my-change
+git add git-practice/practice-notes.md
+git commit -m "Add practice note"
+git push -u origin feature/my-change
 ```
 
-Refresh your fork's GitHub page and select the branch dropdown. The branch should appear. If your branch uses another name, substitute that name in the command.
+- `git remote -v` — confirm `origin` points to your own GitHub fork.
+- `git switch feature/my-change` — switches to the branch created in Lab 02; do not use `-c` again if it exists.
+- `git add git-practice/practice-notes.md` — stages the note.
+- `git commit -m "Add practice note"` — saves the note in local history.
+- `git push -u origin feature/my-change` — publishes the branch to your fork and sets upstream tracking for shorter future pushes.
 
-### 7. Make a controlled merge conflict (in this repository)
+On GitHub, refresh your fork and select `feature/my-change` from the branch dropdown. Confirm the commit and note are visible.
 
-This lab deliberately uses two branches that edit the same line. Start from a clean working tree and from `main`:
+## After the command labs — controlled merge conflict
+
+The merge-conflict exercise uses the disposable `git-practice/conflict-demo.txt` file. Start from a clean working tree and follow the steps below. The branches are local to your forked clone; no remote is needed to create a conflict.
 
 ```bash
 git status
@@ -72,7 +121,7 @@ git switch main
 git switch -c conflict/branch-a
 ```
 
-Edit the first line of `git-practice/conflict-demo.txt` to `message=Hello from branch A`, then:
+Change the file's only line to `message=Hello from branch A`, then:
 
 ```bash
 git add git-practice/conflict-demo.txt
@@ -81,7 +130,7 @@ git switch main
 git switch -c conflict/branch-b
 ```
 
-Edit that same line to `message=Hello from branch B`, then:
+Change the same line to `message=Hello from branch B`, then:
 
 ```bash
 git add git-practice/conflict-demo.txt
@@ -89,50 +138,31 @@ git commit -m "Set message from branch B"
 git merge conflict/branch-a
 ```
 
-Git should report a conflict because both branches changed the same line. Open the file in VS Code, keep or combine the wording so the final line reads `message=Hello from both branches`, and remove every conflict marker. Then:
+Git should report a conflict because both branches changed the same line. In VS Code, choose or combine the intended content so the final line is `message=Hello from both branches`. Remove `<<<<<<<`, `=======`, and `>>>>>>>`, then:
 
 ```bash
+git status
 git diff
 git add git-practice/conflict-demo.txt
 git commit -m "Resolve practice merge conflict"
 git log --oneline --graph --all
 ```
 
-This merge finishes on `conflict/branch-b`; it does not change `main`. Do not switch branches before resolving the conflict. If you want to repeat the exercise, first return to `main` and create fresh branches with new names, or ask the instructor for the reset instructions.
-
-### 8. Recovery commands (optional / take-home)
-
-Use `git-practice/recovery-playground.txt` only; it is a disposable practice file. These operations create additional practice history on your practice branch.
-
-**A. Discard an unstaged edit with `git restore`:**
-
-1. Switch to your practice branch: `git switch practice/my-commands`.
-2. Add a temporary line to `git-practice/recovery-playground.txt`.
-3. Inspect it with `git diff`.
-4. Run `git restore git-practice/recovery-playground.txt` and verify with `git status` that the edit is gone.
-
-**B. Reverse a commit with `git revert`:**
-
-1. Add a harmless line to `recovery-playground.txt`, stage it, and commit it.
-2. Get the commit hash using `git log --oneline`.
-3. Run `git revert <that-commit-hash>` and save the editor message if Git opens one.
-4. Check `git log --oneline` for the new `Revert ...` commit and inspect the file.
-
-**C. Park unfinished work with `git stash`:**
-
-1. Add a different temporary line to `recovery-playground.txt` but do not stage it.
-2. Run `git stash`, then `git status`.
-3. Run `git stash pop` and inspect the restored edit with `git diff`.
-
-**Never run `git reset --hard` or `git push --force` as part of this beginner lab.**
-
-### Repeat the merge-conflict exercise
-
-After a conflict exercise has been completed and you are no longer on either conflict branch, you can return to main and delete only these disposable local lab branches:
+The merge completes on `conflict/branch-b`; `main` remains unchanged. To repeat the exercise, switch to `main` and remove only the disposable local branches after confirming there is no work to keep:
 
 ```bash
 git switch main
 git branch -D conflict/branch-a conflict/branch-b
 ```
 
-This removes the local branches created by the conflict exercise. Do not use these branch-deletion commands on work you want to keep. Then repeat the exact branch setup steps above.
+## One-line command recap
+
+| Command | Remember it as |
+|---|---|
+| `git status` | What does Git see right now? |
+| `git diff` | Which unstaged lines changed? |
+| `git log --oneline` | What has already been committed? |
+| `git branch` / `git switch` | Which branch am I on, and how do I move? |
+| `git add` / `git diff --staged` / `git commit` | Stage, inspect, then save locally. |
+| `git remote -v` / `fetch` / `pull` / `push` | Check remote, download, integrate, publish. |
+| `git restore` / `revert` / `stash` | Recover carefully or park unfinished work. |

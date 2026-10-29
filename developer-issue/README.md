@@ -19,7 +19,7 @@ git switch main
 git switch -c fix/event-counter
 ```
 
-In `developer-issue/counter.js`, change:
+In `developer-issue/counter.js`, change the return expression:
 
 ```js
 return currentCount + 2;
