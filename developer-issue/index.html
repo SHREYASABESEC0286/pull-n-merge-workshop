@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Events Board | PULL N MERGE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand-mark">C</div>
+      <div>
+        <p class="eyebrow">CAMPUS LIFE</p>
+        <h1>Campus Events Board</h1>
+      </div>
+      <span class="local-tag">LOCAL DEMO</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">THIS WEEK</p>
+      <h2>Find your people. Join something new.</h2>
+      <p>Browse a sample campus event. This is a static teaching demo; no account or network connection is needed.</p>
+    </section>
+
+    <article class="event-card">
+      <div class="event-date"><span>OCT</span><strong>30</strong><span>FRI</span></div>
+      <div class="event-content">
+        <span class="event-type">COMMUNITY</span>
+        <h3>Build Night: Mini Projects</h3>
+        <p>Bring an idea, pair up with classmates, and build a tiny project in one evening.</p>
+        <div class="event-bottom">
+          <span><strong id="attendee-count">12</strong> students joined</span>
+          <button id="join-button" type="button">Join event <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </article>
+
+    <p class="hint">Workshop task: the Join button has a small bug. Read <code>BUG_REPORT.md</code>, fix it on a branch, and test again.</p>
+  </main>
+  <script src="counter.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

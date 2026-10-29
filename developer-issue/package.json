@@ -1,0 +1,9 @@
+{
+  "name": "pull-n-merge-event-counter",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A tiny local bug-fix exercise for the PULL N MERGE workshop",
+  "scripts": {
+    "test": "node --test counter.test.js"
+  }
+}
