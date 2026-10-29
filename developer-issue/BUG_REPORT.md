@@ -25,3 +25,7 @@ Every click should increase the attendee count by **1**.
 - Two clicks add exactly two attendees.
 - The browser page still works after the fix.
 - The fix is committed on a new branch, not directly to `main`.
+
+## Workshop merge-conflict extension
+
+After fixing the bug on `fix/event-counter`, follow `README.md` to simulate another developer changing the same line. The competing `+3` change exists only to create a deterministic conflict. Resolve the conflict by preserving the acceptance criterion: exactly one attendee is added per click.
